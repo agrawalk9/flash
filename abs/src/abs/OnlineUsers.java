@@ -51,8 +51,8 @@ public class OnlineUsers extends user {
         
         userProfileBtn.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                ProfilePage userProfile=new ProfilePage(user.username,user.dob,user.name,0);
-                userProfile.show();
+                //ProfilePage userProfile=new ProfilePage(user.username,user.dob,user.name,0);
+                //userProfile.show();
             }
         });
         othersProfileBtn.addActionListener(new ActionListener(){
@@ -98,23 +98,11 @@ public class OnlineUsers extends user {
         chatBtn.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 String s=clientUsername.getText();
-                    DataFetch d=new DataFetch();
-                    d.fetchData();
-                    try{
-                          while(d.rs2.next()){
-                              String u2=d.rs2.getString("username");
-                              if(u2.equals(s)){
+                    
+                   
                                   ChatPage c=new ChatPage(clientUsername.getText(),clientSocket);
                                   c.chat();
-                              }
-                              
-                          }
-                          d.con.close();
-                    }
-                    catch(Exception ex){
-                        System.out.println(ex);
-                    }
-                  
+                                     
             }
         });    
 
