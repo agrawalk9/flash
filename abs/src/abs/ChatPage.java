@@ -11,17 +11,17 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 class ChatReadMSG implements Runnable{
-    Socket s=null;
     String[] tokens1;
     JTextArea textArea2;
     @Override
     public void run() {
         try {
-            InputStream is = s.getInputStream();
+            InputStream is = Writer.serverSocket.getInputStream();
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);
             char[] msg1 = new char[1024];
@@ -51,13 +51,12 @@ class ChatReadMSG implements Runnable{
             Logger.getLogger(ChatReadMSG.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    void acceptConnection(Socket soc,JTextArea t){
-        s=soc;
+    void acceptConnection(JTextArea t){
         textArea2=t;
     }  
 }
 
-class ChatPage extends user{
+class ChatPage{
     JFrame chatFrame;
     int z=0;
     JPanel chatPanel;
@@ -65,15 +64,12 @@ class ChatPage extends user{
     static JTextArea textArea2;
     JButton sendBtn;
     JScrollPane sp;
-    String clientUsername,data;
-    Socket clientSocket;
-    OutputStream os=null;
-    OutputStreamWriter osw=null;
-    BufferedWriter bw=null;
-    ChatPage(String username,Socket socket){
-        clientUsername=username;
-        this.clientSocket=socket;
+    String clientUsername;
+    
+    ChatPage(String clientUsername){
+    	this.clientUsername=clientUsername;
     }
+    
     void chat(){
         chatPanel=new JPanel();
         chatFrame=new JFrame();
@@ -84,25 +80,12 @@ class ChatPage extends user{
         chatFrame.setLayout(new FlowLayout());
         chatFrame.setVisible(true);
         chatFrame.setSize(500,500);
-        
+        //Clients.clients.put(clientUsername, textArea1);
         ChatReadMSG chatReadMSG=new ChatReadMSG();
-        try{
-            chatReadMSG.acceptConnection(clientSocket,textArea2);
-        }
-        catch(Exception e){
-            System.out.println(e);
-        }
+        chatReadMSG.acceptConnection(textArea2);
         Thread t=new Thread(chatReadMSG);
         t.start();
-        
-        try{
-            os = clientSocket.getOutputStream();
-            osw = new OutputStreamWriter(os);
-            bw = new BufferedWriter(osw);
-        }            
-        catch(Exception e){
-            System.out.println(e);
-        }
+       
         sendBtn.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 //textArea2.setLineWrap(true);
@@ -112,12 +95,12 @@ class ChatPage extends user{
                 //while(true){
                     if(!msg.equals("")){
                         try {
-                            bw.flush();
-                            bw.write(CHAT+":"+MSG+":"+clientUsername+":"+msg);
+                            Writer.bw.flush();
+                            Writer.bw.write(CHAT+":"+MSG+":"+clientUsername+":"+msg);
                             System.out.println("Message sent to the server is "+msg);
                             message=msg;
                             msg="";
-                            bw.flush();
+                            Writer.bw.flush();
                         } catch (IOException ex) {
                             Logger.getLogger(ChatPage.class.getName()).log(Level.SEVERE, null, ex);
                         }

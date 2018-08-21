@@ -12,29 +12,29 @@ import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.TreeMap;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 public class OnlineUsers extends user {
 	JButton userProfileBtn,othersProfileBtn,logoutBtn,chatBtn,groupBtn;
     JTextField clientUsername;
     JLabel label;
-   
+    JTextArea textArea2;
     JFrame frame,loginFrame;
-   Socket clientSocket;
-    OnlineUsers(JFrame loginframe,Socket socket){
+    Socket senderSocket;
+    
+    
+    public OnlineUsers(JFrame loginframe){
         loginFrame=new JFrame();
-        this.loginFrame=loginframe;
-        this.clientSocket=socket;
+        this.loginFrame=loginframe;       
     }
-    OnlineUsers(){
-        
-    }
+    
     public void onlineUser(){
-       
         userProfileBtn=new JButton();
         groupBtn=new JButton("Groups");
         othersProfileBtn=new JButton();
@@ -47,7 +47,7 @@ public class OnlineUsers extends user {
         frame=new JFrame();
         frame.setSize(700,600);
         frame.setLayout(new FlowLayout());
-        
+        //Clients.clients=new TreeMap<>();
         
         userProfileBtn.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
@@ -71,23 +71,11 @@ public class OnlineUsers extends user {
         logoutBtn.addActionListener(new ActionListener(){
            public void actionPerformed(ActionEvent e){
                try {
-                   InetAddress IP=InetAddress.getLocalHost();
-                   OutputStream os = clientSocket.getOutputStream(); 
-                   
-                   user.id=0;
-                  
-                   OutputStreamWriter osw = new OutputStreamWriter(os);
-                   BufferedWriter bw1 = new BufferedWriter(osw);
-                   //osw.flush();
-                   bw1.write("CHAT:LGT:"+user.username+":"+IP.getHostAddress());
-                   bw1.flush();
-                   
-                   clientSocket.close();
-                   
+                   Writer.bw.flush();
+                   Writer.bw.write("CHAT:LGT:"+user.username+":"+Writer.IP.getHostAddress());
+                   Writer.bw.flush();
                    frame.dispose();
                    loginFrame.setVisible(true);
-                   
-                   os.close();
                } catch (UnknownHostException ex1) {
                    System.out.println(ex1);
                } catch (IOException ex2) {
@@ -98,11 +86,8 @@ public class OnlineUsers extends user {
         chatBtn.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 String s=clientUsername.getText();
-                    
-                   
-                                  ChatPage c=new ChatPage(clientUsername.getText(),clientSocket);
-                                  c.chat();
-                                     
+                ChatPage c=new ChatPage(s);
+                c.chat();
             }
         });    
 

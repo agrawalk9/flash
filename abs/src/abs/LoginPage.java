@@ -25,12 +25,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-class Writer{
+class Writer {
 	static InetAddress IP=null;
     static OutputStream os=null;
     static OutputStreamWriter osw=null;
     static BufferedWriter bw=null;
-    static Socket serverSocket=null; 
+    static Socket serverSocket=null;
 }
 
 class ReadMSG implements Runnable{
@@ -65,7 +65,7 @@ class ReadMSG implements Runnable{
                 tokens = s1.split(delims);
                 if(tokens[3].equals("Logged inn Established")) {
                 	loginFrame.dispose();
-                    OnlineUsers o1=new OnlineUsers(loginFrame,serverSocket);
+                    OnlineUsers o1=new OnlineUsers(loginFrame);
                     o1.onlineUser();
                 }
                 else {
@@ -84,7 +84,7 @@ class ReadMSG implements Runnable{
     }
 }
 
-public class LoginPage extends user{
+public class LoginPage{
 	JButton loginBtn,registerPage;
     JLabel u,p,status;
     JTextField u1,p1;
@@ -130,6 +130,7 @@ public class LoginPage extends user{
                 }
                 else{
                 	try {
+                		user.username=username;
                 		Writer.bw.flush();
 						Writer.bw.write("CHAT:LOGIN:"+username+":"+password+":"+Writer.IP.getHostAddress());
 						Writer.bw.flush();
@@ -151,7 +152,7 @@ public class LoginPage extends user{
             }
 
             /*private void setDefaultCloseOperation(int DISPOSE_ON_CLOSE) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet.");
             }*/
         });
         loginFrame.addWindowListener(new WindowAdapter() {
